@@ -1,6 +1,8 @@
-from config import db, app
+from config import db, app, manager
 from models import *
 from flask import jsonify
+
+manager.create_api(User, methods=['GET', 'POST'])
 
 @app.route("/login")
 def login():
@@ -24,7 +26,6 @@ def del_test():
 def get_user():
 	users = [user.serialize() for user in User.query.all()]
 	return jsonify(users=users)
-
 
 if __name__ == '__main__':
 	app.run(debug=True)
