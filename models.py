@@ -12,6 +12,13 @@ class User(db.Model):
 		self.email = email
 		self.first_name = fn
 		self.last_name = ln
+	
+	def serialize(self):
+		return {
+			'email': self.email,
+			'first_name': self.first_name,
+			'last_name': self.last_name
+		}
 
 class Ad(db.Model):
 	__tablename__ = 'Ad'

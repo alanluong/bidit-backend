@@ -1,5 +1,6 @@
 from config import db, app
 from models import *
+from flask import jsonify
 
 @app.route("/login")
 def login():
@@ -15,11 +16,14 @@ def create_testdb():
 @app.route('/create_testdb_del')
 def del_test():
 	test = Ad.query.filter_by(uploader_email='test2@testing.com').first()
-	print test.price
 	db.session.delete(test)
 	db.session.commit()
 	return 'delete entry'
 
+@app.route('/user')
+def get_user():
+	users = [user.serialize() for user in User.query.all()]
+	return jsonify(users=users)
 
 
 if __name__ == '__main__':
