@@ -8,10 +8,10 @@ class User(db.Model):
 	first_name = db.Column(db.String(45))
 	last_name = db.Column(db.String(45))
 
-	def __init__(self, email, fn, ln):
+	def __init__(self, email, first_name, last_name):
 		self.email = email
-		self.first_name = fn
-		self.last_name = ln
+		self.first_name = first_name
+		self.last_name = last_name
 	
 	def serialize(self):
 		return {
