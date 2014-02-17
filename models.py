@@ -1,6 +1,40 @@
 from config import db
 
+class Ad(db.Model):
+	__tablename__ = 'Ad'
+	id = db.Column(db.Integer, primary_key=True)
+	email = db.Column(db.String(50), db.ForeignKey("User.email"), nullable=False)
+	price = db.Column(db.Integer)
+	description = db.Column(db.String(45))
 
+	def __init__(self, email, price, description):
+		self.email = email
+		self.price = price
+		self.description = description
+
+class Bid(db.Model):
+	__tablename__ = 'Bid'
+	id = db.Column(db.Integer, primary_key=True)
+	price = db.Column(db.Numeric(19,4), nullable=False)
+	bidder = db.Column(db.String(50), db.ForeignKey("User.email"), nullable=False)
+	seller = db.Column(db.String(50), db.ForeignKey("User.email"), nullable=False)
+
+	def __init__(self, price, bidder, seller):
+		self.price = price
+		self.bidder = bidder
+		self.seller = seller
+
+class Message(db.Model):
+	__tablename__ = 'Message'
+	id = db.Column(db.Integer, primary_key=True)
+	sender = db.Column(db.String(50), db.ForeignKey("User.email"), nullable=False)
+	receiver = db.Column(db.String(50), db.ForeignKey("User.email"), nullable=False)
+	content = db.Column(db.Text)
+
+	def __init__(self, price, bidder, seller):
+		self.price = price
+		self.bidder = bidder
+		self.seller = seller
 
 class User(db.Model):
 	__tablename__ = 'User'
@@ -19,14 +53,3 @@ class User(db.Model):
 			'first_name': self.first_name,
 			'last_name': self.last_name
 		}
-
-class Ad(db.Model):
-	__tablename__ = 'Ad'
-	uploader_email = db.Column(db.String(50), primary_key=True)
-	price = db.Column(db.Integer)
-	description = db.Column(db.String(45))
-
-	def __init__(self, uploader_email, price, description):
-		self.uploader_email = uploader_email
-		self.price = price
-		self.description = description
