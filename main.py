@@ -1,6 +1,7 @@
-from config import db, app, manager
+from config import db, app, manager, PORT
 from models import *
 from flask import jsonify
+import test
 
 manager.create_api(Ad, methods=['GET', 'POST'])
 manager.create_api(User, methods=['GET', 'POST'])
@@ -21,4 +22,4 @@ def get_user():
 	return jsonify(users=users)
 
 if __name__ == '__main__':
-	app.run(debug=True)
+	app.run(port=PORT, debug=True)

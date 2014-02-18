@@ -4,7 +4,7 @@ class Ad(db.Model):
 	__tablename__ = 'Ad'
 	id = db.Column(db.Integer, primary_key=True)
 	email = db.Column(db.String(50), db.ForeignKey("User.email"), nullable=False)
-	price = db.Column(db.Integer)
+	price = db.Column(db.Numeric(19,4))
 	description = db.Column(db.String(45))
 
 	def __init__(self, email, price, description):
