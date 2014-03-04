@@ -11,6 +11,8 @@ APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_FOLDER = os.path.join(APP_ROOT, 'upload')
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 
+app.config['PROPAGATE_EXCEPTIONS'] = True
+
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 manager.create_api(Ad, methods=['GET', 'POST'])
@@ -29,18 +31,31 @@ def allowed_file(filename):
 @app.route('/cell_upload', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
+
+	ad = Ad(request.form['email'], request.form['price'], request.form['description'])
+	db.session.add(ad)
+	db.session.commit()
         file = request.files['file']
+        if file and allowed_file(file.filename):
+            filename = secure_filename(str(ad.id)+".jpg")
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return jsonify(path= os.path.join(app.config['UPLOAD_FOLDER'], filename))
+	"""
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             return redirect(url_for('uploaded_file',
                                     filename=filename))
+	"""
     return '''
     <!doctype html>
     <title>Upload new File</title>
     <h1>Upload new File</h1>
     <form action="" method=post enctype=multipart/form-data>
       <p><input type=file name=file>
+	 <input type=number name=price>
+	 <input type=text name=description>
+	 <input type=email name=email>
          <input type=submit value=Upload>
     </form>
     '''
