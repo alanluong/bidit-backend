@@ -6,11 +6,11 @@ import urllib2
 BASE_URL = "http://127.0.0.1:" + str(PORT) + "/api/"
 
 def insert_test_users():
-	user = User("testing@test.com", "alan", "luong")
+	user = User("testing@test.com", "password", "alan", "luong")
 	db.session.add(user)
-	user = User("bobdole@gmail.com", "bob", "dole")
+	user = User("bobdole@gmail.com", "asdf", "bob", "dole")
 	db.session.add(user)
-	user = User("alice123@yahoo.com", "alice", "dole")
+	user = User("alice123@yahoo.com", "fdsa", "alice", "dole")
 	db.session.add(user)
 	db.session.commit()
 

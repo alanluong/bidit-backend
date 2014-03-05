@@ -73,13 +73,6 @@ def create_testdb():
 	db.create_all()
 	return 'created tables'
 
-@app.route('/delete_testdb')
-def delete_testdb():
-	bob = User.query.filter_by(first_name='bob').first()
-	db.session.delete(bob)
-	db.session.commit()
-	return 'deleted tables'
-
 @app.route('/user')
 def get_user():
 	users = [user.serialize() for user in User.query.all()]

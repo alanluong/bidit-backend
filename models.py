@@ -39,17 +39,20 @@ class Message(db.Model):
 class User(db.Model):
 	__tablename__ = 'User'
 	email = db.Column(db.String(50), primary_key=True)
+	password = db.Column(db.String(50))
 	first_name = db.Column(db.String(45))
 	last_name = db.Column(db.String(45))
 
-	def __init__(self, email, first_name, last_name):
+	def __init__(self, email, password, first_name, last_name):
 		self.email = email
+		self.password = password
 		self.first_name = first_name
 		self.last_name = last_name
 	
 	def serialize(self):
 		return {
 			'email': self.email,
+			'password': self.password,
 			'first_name': self.first_name,
 			'last_name': self.last_name
 		}
