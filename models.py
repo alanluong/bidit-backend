@@ -1,4 +1,5 @@
 from config import db
+from flask.ext.login import UserMixin
 
 class Ad(db.Model):
 	__tablename__ = 'Ad'
@@ -36,7 +37,7 @@ class Message(db.Model):
 		self.bidder = bidder
 		self.seller = seller
 
-class User(db.Model):
+class User(db.Model, UserMixin):
 	__tablename__ = 'User'
 	email = db.Column(db.String(50), primary_key=True)
 	password = db.Column(db.String(50))
@@ -48,6 +49,9 @@ class User(db.Model):
 		self.password = password
 		self.first_name = first_name
 		self.last_name = last_name
+	
+	def get_id(self):
+		return self.email
 	
 	def serialize(self):
 		return {
