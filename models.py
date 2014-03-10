@@ -19,11 +19,13 @@ class Bid(db.Model):
 	price = db.Column(db.Numeric(19,4), nullable=False)
 	bidder = db.Column(db.String(50), db.ForeignKey("User.email"), nullable=False)
 	seller = db.Column(db.String(50), db.ForeignKey("User.email"), nullable=False)
+	ad_id = db.Column(db.Integer, db.ForeignKey("Ad.id"), nullable=False)
 
-	def __init__(self, price, bidder, seller):
+	def __init__(self, price, bidder, seller, ad_id):
 		self.price = price
 		self.bidder = bidder
 		self.seller = seller
+		self.ad_id = ad_id
 
 class Message(db.Model):
 	__tablename__ = 'Message'
