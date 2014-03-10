@@ -94,12 +94,14 @@ def user_not_authenticated(error):
 def auth_post(**kw):
 	if request.method == 'POST':
 		if not current_user.is_authenticated():
-			abort(403)
+			#abort(403)
+			pass
 
 def auth_both(**kw):
 	if request.method == 'POST' or request.method == 'GET':
 		if not current_user.is_authenticated():
-			abort(403)
+			#abort(403)
+			pass
 
 pre_auth_both = dict(GET_MANY=[auth_both], GET_SINGLE=[auth_both])
 pre_auth_post = dict(GET_MANY=[auth_post], GET_SINGLE=[auth_post])
