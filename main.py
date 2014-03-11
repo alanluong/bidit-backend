@@ -1,8 +1,7 @@
 from config import db, app, api_manager, PORT, login_manager
 from models import *
 import os
-import zipfile 
-from flask import Flask, request, redirect, url_for, jsonify, abort
+from flask import Flask, request, redirect, url_for, jsonify, abort, make_response
 from werkzeug.utils import secure_filename
 from flask import send_from_directory
 from flask.ext.login import current_user, login_user, logout_user
@@ -21,20 +20,6 @@ def uploaded_file(filename):
 def allowed_file(filename):
 	return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
-@app.route('/get_images')
-def get_images():
-	zipname = os.path.join(app.config['UPLOAD_FOLDER'], 'test.zip')
-	zipf = zipfile.ZipFile(zipname, 'w')
-	for i in range(0,10):
-	filename = str(i) + ".jpg"
-	filename = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-	zipf.write(filename)
-	zipf.close()
-	response = send_from_directory(app.config['UPLOAD_FOLDER'], 'test.zip')
-	response.headers["Content-Disposition"] = "filename='test.zip'"
-	return response
-
-
 @app.route('/cell_upload', methods=['GET', 'POST'])
 def upload_file():
 	if request.method == 'POST':
@@ -45,14 +30,9 @@ def upload_file():
 		if file and allowed_file(file.filename):
 			filename = secure_filename(str(ad.id)+".jpg")
 			file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-			return jsonify(path= os.path.join(app.config['UPLOAD_FOLDER'], filename))
-	"""
-		if file and allowed_file(file.filename):
-			filename = secure_filename(file.filename)
-			file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-			return redirect(url_for('uploaded_file',
-									filename=filename))
-	"""
+			ad.image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+			db.session.commit()
+			return jsonify(path = os.path.join(app.config['UPLOAD_FOLDER'], filename))
 	return '''
 	<!doctype html>
 	<title>Upload new File</title>
@@ -81,7 +61,8 @@ def login():
 		if len(users) > 0:
 			login_user(users[0])
 			return '%s is logged in' % users[0].email
-	return 'enter a login'
+	return 'enter login',403
+
 
 @app.route('/logout')
 def logout():
@@ -106,22 +87,16 @@ def load_user(id):
 def user_not_authenticated(error):
 	return "user is not authenticated"
 
-def auth_post(**kw):
-	if request.method == 'POST':
-		if not current_user.is_authenticated():
-			abort(403)
+def auth_func(**kw):
+	if not current_user.is_authenticated():
+		abort(403)
 
-def auth_both(**kw):
-	if request.method == 'POST' or request.method == 'GET':
-		if not current_user.is_authenticated():
-			abort(403)
-
-pre_auth_both = dict(GET_MANY=[auth_both], GET_SINGLE=[auth_both])
-pre_auth_post = dict(GET_MANY=[auth_post], GET_SINGLE=[auth_post])
-api_manager.create_api(Ad, methods=['GET', 'POST'], preprocessors=pre_auth_post)
+pre_auth_both = dict(GET_MANY=[auth_func], GET_SINGLE=[auth_func], POST=[auth_func])
+pre_auth_post = dict(POST=[auth_func])
+api_manager.create_api(Ad, methods=['GET', 'POST'], preprocessors=pre_auth_post, results_per_page=30)
 api_manager.create_api(User, methods=['GET', 'POST'], preprocessors=pre_auth_post)
 api_manager.create_api(Bid, methods=['GET', 'POST'], preprocessors=pre_auth_both)
 api_manager.create_api(Message, methods=['GET', 'POST'], preprocessors=pre_auth_both)
 
 if __name__ == '__main__':
-	app.run(host='0.0.0.0', port=8080, debug=True)
+	app.run(host='0.0.0.0', port=8080, debug=False)

@@ -5,25 +5,29 @@ class Ad(db.Model):
 	__tablename__ = 'Ad'
 	id = db.Column(db.Integer, primary_key=True)
 	email = db.Column(db.String(50), db.ForeignKey("User.email"), nullable=False)
-	price = db.Column(db.Numeric(19,4))
+	price = db.Column(db.Numeric(15,2))
 	description = db.Column(db.String(45))
+	image_path = db.Column(db.String(45))
 
-	def __init__(self, email, price, description):
+	def __init__(self, email, price, description, image_path=None):
 		self.email = email
 		self.price = price
 		self.description = description
+		self.image_path = image_path 
 
 class Bid(db.Model):
 	__tablename__ = 'Bid'
 	id = db.Column(db.Integer, primary_key=True)
-	price = db.Column(db.Numeric(19,4), nullable=False)
+	price = db.Column(db.Numeric(15,2), nullable=False)
 	bidder = db.Column(db.String(50), db.ForeignKey("User.email"), nullable=False)
 	seller = db.Column(db.String(50), db.ForeignKey("User.email"), nullable=False)
+	ad_id = db.Column(db.Integer, db.ForeignKey("Ad.id"), nullable=False)
 
-	def __init__(self, price, bidder, seller):
+	def __init__(self, price, bidder, seller, ad_id):
 		self.price = price
 		self.bidder = bidder
 		self.seller = seller
+		self.ad_id = ad_id
 
 class Message(db.Model):
 	__tablename__ = 'Message'
@@ -32,10 +36,10 @@ class Message(db.Model):
 	receiver = db.Column(db.String(50), db.ForeignKey("User.email"), nullable=False)
 	content = db.Column(db.Text)
 
-	def __init__(self, price, bidder, seller):
-		self.price = price
-		self.bidder = bidder
-		self.seller = seller
+	def __init__(self, sender, receiver, content):
+		self.sender = sender 
+		self.receiver = receiver 
+		self.content = content
 
 class User(db.Model, UserMixin):
 	__tablename__ = 'User'
