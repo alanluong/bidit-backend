@@ -1,6 +1,7 @@
 from config import db, app, api_manager, PORT, login_manager
 from models import *
 import os
+import zipfile 
 from flask import Flask, request, redirect, url_for, jsonify, abort
 from werkzeug.utils import secure_filename
 from flask import send_from_directory
@@ -17,8 +18,22 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 def uploaded_file(filename):
 	return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
-	def allowed_file(filename):
-		return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+def allowed_file(filename):
+	return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+
+@app.route('/get_images')
+def get_images():
+	zipname = os.path.join(app.config['UPLOAD_FOLDER'], 'test.zip')
+	zipf = zipfile.ZipFile(zipname, 'w')
+	for i in range(0,10):
+	filename = str(i) + ".jpg"
+	filename = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+	zipf.write(filename)
+	zipf.close()
+	response = send_from_directory(app.config['UPLOAD_FOLDER'], 'test.zip')
+	response.headers["Content-Disposition"] = "filename='test.zip'"
+	return response
+
 
 @app.route('/cell_upload', methods=['GET', 'POST'])
 def upload_file():
