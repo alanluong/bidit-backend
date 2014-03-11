@@ -91,6 +91,7 @@ def auth_func(**kw):
 	if not current_user.is_authenticated():
 		abort(403)
 
+
 pre_auth_both = dict(GET_MANY=[auth_func], GET_SINGLE=[auth_func], POST=[auth_func])
 pre_auth_post = dict(POST=[auth_func])
 api_manager.create_api(Ad, methods=['GET', 'POST'], preprocessors=pre_auth_post, results_per_page=30)
