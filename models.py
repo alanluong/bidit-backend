@@ -45,8 +45,6 @@ class User(db.Model, UserMixin):
 	__tablename__ = 'User'
 	email = db.Column(db.String(50), primary_key=True)
 	password = db.Column(db.String(50))
-	first_name = db.Column(db.String(45))
-	last_name = db.Column(db.String(45))
 
 	def __init__(self, email, password, first_name, last_name):
 		self.email = email
