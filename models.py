@@ -35,24 +35,23 @@ class Message(db.Model):
 	sender = db.Column(db.String(50), db.ForeignKey("User.email"), nullable=False)
 	receiver = db.Column(db.String(50), db.ForeignKey("User.email"), nullable=False)
 	content = db.Column(db.Text)
+	subject = db.Column(db.String(20), nullable=False)
+	timestamp = db.Column(db.DateTime, nullable=False)
 
-	def __init__(self, sender, receiver, content):
+	def __init__(self, sender, receiver, content, subject):
 		self.sender = sender 
 		self.receiver = receiver 
 		self.content = content
+		self.subject = subject
 
 class User(db.Model, UserMixin):
 	__tablename__ = 'User'
 	email = db.Column(db.String(50), primary_key=True)
 	password = db.Column(db.String(50))
-	first_name = db.Column(db.String(45))
-	last_name = db.Column(db.String(45))
 
-	def __init__(self, email, password, first_name, last_name):
+	def __init__(self, email, password):
 		self.email = email
 		self.password = password
-		self.first_name = first_name
-		self.last_name = last_name
 	
 	def get_id(self):
 		return self.email

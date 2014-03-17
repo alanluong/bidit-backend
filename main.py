@@ -8,7 +8,7 @@ from flask.ext.login import current_user, login_user, logout_user
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_FOLDER = os.path.join(APP_ROOT, 'upload')
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp4'])
 
 app.config['PROPAGATE_EXCEPTIONS'] = True
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -89,15 +89,16 @@ def user_not_authenticated(error):
 
 def auth_func(**kw):
 	if not current_user.is_authenticated():
-		abort(403)
+		#abort(403)
+		pass
 
 
 pre_auth_both = dict(GET_MANY=[auth_func], GET_SINGLE=[auth_func], POST=[auth_func])
 pre_auth_post = dict(POST=[auth_func])
 api_manager.create_api(Ad, methods=['GET', 'POST'], preprocessors=pre_auth_post, results_per_page=30)
 api_manager.create_api(User, methods=['GET', 'POST'], preprocessors=pre_auth_post)
-api_manager.create_api(Bid, methods=['GET', 'POST'], preprocessors=pre_auth_both)
-api_manager.create_api(Message, methods=['GET', 'POST'], preprocessors=pre_auth_both)
+api_manager.create_api(Bid, methods=['GET', 'POST'], preprocessors=pre_auth_both, results_per_page=None)
+api_manager.create_api(Message, methods=['GET', 'POST'], preprocessors=pre_auth_both, results_per_page=None)
 
 if __name__ == '__main__':
 	app.run(host='0.0.0.0', port=8080, debug=False)
